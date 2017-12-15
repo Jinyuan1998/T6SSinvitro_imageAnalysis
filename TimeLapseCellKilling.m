@@ -1,17 +1,18 @@
 function T = TimeLapseCellKilling(folderName, useI, printH)
-% clear; close all
-% cd <workdir>
-% printH = 1;
-% useI = [1 6 18 24 36];
+% folderName: the directory containing time lapse image
+% useI: the index of images used for analysis
+% printH: handle controls whether to print image or not; default is 0=not print; 1=print
+
+printH = 0;
 cd(folderName)
 f = dir('Experiment*');
 F = f(find(vertcat(f.isdir)));
 folder = F.name;
 % image analysis of the time lapse
 % output the number of prey/predator cells in each frame of the time lapse
-% predator: constitutive bibrio killer (green) + prey: Aeromonas veronii (orange)
+% predator: constitutive vibrio killer (green) + prey: Aeromonas veronii (orange)
 useimage = useI;
-%% 1. check to see if the folders are made
+%% 1. check to see if the subfolders are made
 if ~ exist('outputPD', 'dir')
     mkdir outputPD
 end
@@ -39,12 +40,10 @@ printFigure = printH;
 % (http://site.physics.georgetown.edu/matlab/code.html)
 % only analyze predator for now
 for i=useimage
-    pr = double(imread([folder '/' preyimagefiles{i}]));
-%     pd = double(imread([folder '/' pdtimagefiles{i}]));
-    
+    pr = double(imread([folder '/' preyimagefiles{i}]));    
     prb = bpass(pr, 2, 5);
     iIdx = i;
-    if iIdx > 1  % the figures shifted during time lapse; now align those figures using the first as reference
+    if iIdx > 1  % the view of microscope drifted during time lapse; now align those figures using the first as reference
         prfix = double(imread([folder '/' preyimagefiles{i-1}]));
         prfix = bpass(prfix, 1, 5);
         
@@ -61,7 +60,7 @@ for i=useimage
 end
 X(X~=0) 
 Y(Y ~= 0)
-save('tform.mat', 'X', 'Y')
+% save('tform.mat', 'X', 'Y')
 %% 3. crop drifted images
 X1 = sum(X(X>=0));
 X2 = sum(X(X<0));
@@ -124,7 +123,7 @@ for i=1:length(useimage)
     prcountws(i) = size(prpos_list, 1);
     clear p
     
-    %%%%%%%%%%%%%%%%%%%%%%%%% analyze predator %%%%%%%%%%%%%%%%
+    %%%%%%%%%%%%%%%%%%%%%%%%% analyze predator (not working well for now due to the weak fluorescence) %%%%%%%%%%%%%%%%
     pd = imread(['cropPd/' ctpdtimagefiles{i}]);
 %     p = imadjust(pd) - imadjust(pr);
 %     pd(pd<0) = 0;
