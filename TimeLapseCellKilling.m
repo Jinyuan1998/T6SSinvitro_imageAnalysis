@@ -1,6 +1,6 @@
 function T = TimeLapseCellKilling(folderName, useI, printH)
 % clear; close all
-% cd /Users/Jinyuan/Documents/YJY_MSKCC/XavierLab/Project_T6SS/TimeLapse/170510_63xVc1118Av
+% cd <workdir>
 % printH = 1;
 % useI = [1 6 18 24 36];
 cd(folderName)
@@ -34,24 +34,15 @@ preyimagefiles = sort({preyimagefiles.name});
 pdtimagefiles = sort({pdtimagefiles.name});
 
 printFigure = printH;
-%% 2. try tracking package (http://site.physics.georgetown.edu/matlab/code.html)
 
+%% 2. use tracking package by Daniel Blair and Eric Dufresne
+% (http://site.physics.georgetown.edu/matlab/code.html)
+% only analyze predator for now
 for i=useimage
     pr = double(imread([folder '/' preyimagefiles{i}]));
 %     pd = double(imread([folder '/' pdtimagefiles{i}]));
     
     prb = bpass(pr, 2, 5);
-%     prb = imadjust(pd);
-%     pdb = bpass(pd, 1, 5, ...
-%                 median(median(pd))/((200-i)/1.1))-prb;
-
-%     figure; imagesc(imadjust(prb))
-%     figure; imagesc(imadjust(pdb));
-    
-    
-%     % In case the stage shifts, align two consecutive images together. find
-%     % out the transformation between two images
-%     iIdx = find(i==useimage)
     iIdx = i;
     if iIdx > 1  % the figures shifted during time lapse; now align those figures using the first as reference
         prfix = double(imread([folder '/' preyimagefiles{i-1}]));
@@ -100,7 +91,7 @@ for i=useimage
 
 end
 
-%% 4.find particles and track
+%% 4.find particles and count
 close all
 ctpreyimagefiles = dir('cropPrey/*_crop.tif');
 ctpdtimagefiles = dir('cropPd/*_crop.tif');
@@ -212,4 +203,3 @@ set(gca, 'ylim', [0 110], 'ytick', 0:20:120)
 % ylabel('percentage of predator cells', 'fontSize',14)
 % set(gca, 'ylim', [0 110], 'ytick', 0:20:120)
 %%
-% save('170414.mat', 'T');
