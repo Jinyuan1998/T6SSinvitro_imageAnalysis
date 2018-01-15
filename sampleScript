@@ -1,15 +1,16 @@
 % image analysis of the time lapse
 % predator: constitutive vibrio killer (green) + prey: Aeromonas veronii (orange)
-cd <directory that contains the folders of images of time lapse>;  % The first movie that works well
+cd <directory that contains the folders of images of time lapse>;  
 
 
 folder1 = 'Experiment-06';
-[prcountws1ctr, pdcountws1ctr] = TimeLapseCellKilling(folder1)
-save('data.mat');
+T = TimeLapseCellKilling(folder1,1:8,0);  % process image 1:8 in directory folder1. handle==0 means that no figure is printed
+str = date
+save([str '.mat'], 'T');
 
 figure
-plot(1:i, prcountws1, 'r*')
+plot(1:size(T,1), T.prey_N, 'r*')
 title('Prey cell #', 'FontSize', 16)
 figure
-plot(1:i, pdcountws, 'm*')
+plot(1:size(T,1), T.predator_N, 'm*')
 title('Predator cell #', 'FontSize', 16)
